@@ -46,8 +46,9 @@ void ScanEngine::_generateAWalet(TWHDWallet* walletNew, const string& typeCoin,
 
     for (const boost::iostreams::mapped_file& wallet : listMappedFiles) {
 
+        TWString *twhdGAF = TWHDWalletGetAddressForCoin(walletNew, _mTWCT[typeCoin]);
         string walletAddress =
-            TWStringUTF8Bytes(TWHDWalletGetAddressForCoin(walletNew, _mTWCT[typeCoin]));
+            TWStringUTF8Bytes(twhdGAF);
 
         bool check = _bFindWallet(wallet, walletAddress);
         // bool check = false;
@@ -62,6 +63,7 @@ void ScanEngine::_generateAWalet(TWHDWallet* walletNew, const string& typeCoin,
                  << setw(20) << typeCoin << ":" << setw(45) << walletAddress << ":  "
                  << TWStringUTF8Bytes(TWHDWalletMnemonic(walletNew)) << endl;
         }
+        TWStringDelete(twhdGAF);
     }
 }
 
@@ -84,11 +86,13 @@ void ScanEngine::_generateWalets() {
         shared_lock<shared_mutex> mtx(_mutx);
         return _isRunning;
     }()) {
-        TWHDWallet* walletNew = TWHDWalletCreate(128, TWStringCreateWithUTF8Bytes(""));
+        TWString *twstring = TWStringCreateWithUTF8Bytes("");
+        TWHDWallet* walletNew = TWHDWalletCreate(128, twstring);
         for (const auto& [key, value] : pStringlistMappedFiles) {
             ScanEngine::_generateAWalet(walletNew, key, value);
         }
-        delete walletNew;
+        TWHDWalletDelete(walletNew);
+        TWStringDelete(twstring);
     }
 }
 
@@ -114,5 +118,6 @@ bool ScanEngine::_bFindWallet(const boost::iostreams::mapped_file& mmap, const s
             right = middle - len_wallet;
         }
     }
+
     return false;
 }

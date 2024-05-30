@@ -134,7 +134,7 @@ void ScanWallet::_printTitle() {
  | |  | | (_| |   < (_|  __/ (_| |  ____) | (_| (_| | | | | | | |  __/ |   
  |_|  |_|\__,_|_|\_\___\___|\__,_| |_____/ \___\__,_|_| |_|_| |_|\___|_|                                                                            
 )" << flush;
-    cout << "Version: 3.0.1" << endl;
+    cout << "Version: 3.0.2" << endl;
 }
 
 bool ScanWallet::_parseKey(vector<string>& keyParsed) {
